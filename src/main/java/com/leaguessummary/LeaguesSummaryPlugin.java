@@ -18,6 +18,9 @@ import java.awt.image.BufferedImage;
 import javax.swing.SwingUtilities;
 import java.util.HashMap;
 import java.util.Map;
+import com.google.gson.Gson;
+import okhttp3.*;
+import java.io.IOException;
 
 @Slf4j
 @PluginDescriptor(
@@ -27,8 +30,14 @@ import java.util.Map;
 )
 public class LeaguesSummaryPlugin extends Plugin {
     private static final int LEAGUES_INTERFACE_ID = 529;
+    private static final String API_ENDPOINT = "http://localhost:3000/api/leagues"; // Change this to your endpoint
+    private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    private final OkHttpClient httpClient = new OkHttpClient();
+    private final Gson gson = new Gson();
+    
     private Map<String, String> leagueStats = new HashMap<>();
     private boolean hasLoggedStats = false;
+    private boolean hasSentStats = false;
 
     @Inject
     private Client client;
@@ -67,6 +76,44 @@ public class LeaguesSummaryPlugin extends Plugin {
         log.info("Leagues Summary stopped!");
     }
 
+    private void sendStatsToEndpoint() {
+        if (leagueStats.isEmpty() || hasSentStats) {
+            return;
+        }
+
+        // Add player name to stats
+        String playerName = client.getLocalPlayer().getName();
+        leagueStats.put("playerName", playerName);
+
+        // Create JSON payload
+        String json = gson.toJson(leagueStats);
+        
+        // Build request
+        Request request = new Request.Builder()
+            .url(API_ENDPOINT)
+            .post(RequestBody.create(JSON, json))  // Fixed parameter order
+            .build();
+
+        // Send request asynchronously
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                log.error("Failed to send stats to endpoint", e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) {
+                    log.error("Unexpected response code: " + response);
+                } else {
+                    log.debug("Successfully sent stats to endpoint");
+                    hasSentStats = true;
+                }
+                response.close();
+            }
+        });
+    }
+
     @Subscribe
     public void onWidgetLoaded(WidgetLoaded event) {
         if (event.getGroupId() != LEAGUES_INTERFACE_ID) {
@@ -83,6 +130,7 @@ public class LeaguesSummaryPlugin extends Plugin {
 
     private void updateStats() {
         leagueStats.clear();
+        hasSentStats = false;  // Reset flag when gathering new stats
         Widget parent = client.getWidget(LEAGUES_INTERFACE_ID, 23);
         
         if (parent != null && parent.getDynamicChildren() != null) {
@@ -126,10 +174,13 @@ public class LeaguesSummaryPlugin extends Plugin {
             hasLoggedStats = true;
         }
 
-        // Update panel
-        SwingUtilities.invokeLater(() -> {
-            panel.updateStats(leagueStats);
-        });
+        // Update panel and send stats
+        if (!leagueStats.isEmpty()) {
+            SwingUtilities.invokeLater(() -> {
+                panel.updateStats(leagueStats);
+                sendStatsToEndpoint();
+            });
+        }
     }
 
     @Provides
