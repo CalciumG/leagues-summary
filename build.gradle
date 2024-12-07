@@ -74,6 +74,10 @@ application {
     ]
 }
 
+run {
+    args = ["--developer-mode", "--insecure-write-credentials"]
+}
+
 tasks.named('run') {
     classpath += sourceSets.test.runtimeClasspath
 }
