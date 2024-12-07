@@ -75,7 +75,7 @@ application {
 }
 
 run {
-    args = ["--developer-mode", "--insecure-write-credentials"]
+    args = ["--developer-mode", "--debug", "--insecure-write-credentials"]
 }
 
 tasks.named('run') {
