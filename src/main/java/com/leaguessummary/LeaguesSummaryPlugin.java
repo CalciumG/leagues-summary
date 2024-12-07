@@ -39,19 +39,19 @@ public class LeaguesSummaryPlugin extends Plugin {
     private boolean hasSentStats = false;
 
     @Inject
-    private Client client;
+    Client client;
 
     @Inject
-    private ClientThread clientThread;
+    ClientThread clientThread;
 
     @Inject
-    private LeaguesSummaryConfig config;
+    LeaguesSummaryConfig config;
 
     @Inject
-    private ClientToolbar clientToolbar;
+    ClientToolbar clientToolbar;
 
     @Inject
-    private LeaguesSummaryPanel panel;
+    LeaguesSummaryPanel panel;
 
     private NavigationButton navButton;
 

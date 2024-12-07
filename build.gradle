@@ -25,9 +25,13 @@ dependencies {
 	testImplementation 'junit:junit:4.12'
 	testImplementation group: 'net.runelite', name:'client', version: runeLiteVersion
 	testImplementation group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	testImplementation 'org.mockito:mockito-core:3.12.4'
+	testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.2'
 
 	runtimeOnly group: 'net.runelite', name:'client', version: runeLiteVersion
 	runtimeOnly group: 'net.runelite', name:'jshell', version: runeLiteVersion
+	runtimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.2'
 }
 
 group = 'com.leaguessummary'
@@ -92,5 +96,13 @@ sourceSets {
         java {
             srcDirs = ['src/test/java']
         }
+    }
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+        showStandardStreams = true
     }
 }
