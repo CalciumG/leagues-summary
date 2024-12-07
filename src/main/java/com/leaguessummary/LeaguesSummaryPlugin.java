@@ -30,7 +30,6 @@ import java.io.IOException;
 )
 public class LeaguesSummaryPlugin extends Plugin {
     private static final int LEAGUES_INTERFACE_ID = 529;
-    private static final String API_ENDPOINT = "http://localhost:3000/api/leagues"; // Change this to your endpoint
     private static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     private final OkHttpClient httpClient = new OkHttpClient();
     private final Gson gson = new Gson();
@@ -90,7 +89,7 @@ public class LeaguesSummaryPlugin extends Plugin {
         
         // Build request
         Request request = new Request.Builder()
-            .url(API_ENDPOINT)
+            .url(config.apiEndpoint())
             .post(RequestBody.create(JSON, json))  // Fixed parameter order
             .build();
 

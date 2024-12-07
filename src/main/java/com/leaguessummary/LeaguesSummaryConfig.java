@@ -26,4 +26,15 @@ public interface LeaguesSummaryConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigItem(
+		keyName = "apiEndpoint",
+		name = "API Endpoint",
+		description = "The endpoint URL where league stats will be sent",
+		position = 3
+	)
+	default String apiEndpoint()
+	{
+		return "http://localhost:3000/api/leagues";
+	}
 }
