@@ -8,30 +8,10 @@ import net.runelite.client.config.ConfigItem;
 public interface LeaguesSummaryConfig extends Config
 {
 	@ConfigItem(
-		keyName = "greeting",
-		name = "Welcome Greeting",
-		description = "The message to show to the user when they login"
-	)
-	default String greeting()
-	{
-		return "Welcome to Leagues Summary!";
-	}
-
-	@ConfigItem(
-		keyName = "showTaskProgress",
-		name = "Show Task Progress",
-		description = "Show progress towards league tasks"
-	)
-	default boolean showTaskProgress()
-	{
-		return true;
-	}
-
-	@ConfigItem(
 		keyName = "apiEndpoint",
 		name = "API Endpoint",
 		description = "The endpoint URL where league stats will be sent",
-		position = 3
+		position = 1
 	)
 	default String apiEndpoint()
 	{
